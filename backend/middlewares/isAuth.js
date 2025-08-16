@@ -1,4 +1,4 @@
- import jwt from "jsonwebtoken"
+//  import jwt from "jsonwebtoken"
 
 // const isAuth=async(req,res,next)=>{
 //     try {
@@ -166,22 +166,48 @@
 
 
 
+// const isAuth = async (req, res, next) => {
+//   try {
+//     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+// if (!token) return res.status(401).json({ message: "Unauthorized — user must log in" });
+
+//     console.log("Middleware token:", token);
+//     if (!token) return res.status(401).json({ message: "Unauthorized — user must log in" });
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     console.log("Decoded JWT:", decoded);
+
+//     req.userId = decoded.id || decoded.userId;  // pick whichever exists
+//     next();
+//   } catch (err) {
+//     console.log("JWT Error:", err.message);
+//     return res.status(401).json({ message: "Unauthorized — invalid token" });
+//   }
+// };
+// export default isAuth;
+
+
+
+
+import jwt from "jsonwebtoken";
+
 const isAuth = async (req, res, next) => {
   try {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-if (!token) return res.status(401).json({ message: "Unauthorized — user must log in" });
+    const token = req.cookies.token;
 
-    console.log("Middleware token:", token);
-    if (!token) return res.status(401).json({ message: "Unauthorized — user must log in" });
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized — user must log in" });
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded JWT:", decoded);
 
-    req.userId = decoded.id || decoded.userId;  // pick whichever exists
+    req.userId = decoded.userId; // ✅ Corrected
     next();
   } catch (err) {
-    console.log("JWT Error:", err.message);
     return res.status(401).json({ message: "Unauthorized — invalid token" });
   }
 };
+
 export default isAuth;
